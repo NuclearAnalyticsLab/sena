@@ -1,0 +1,30 @@
+/* NuclearFF_Theme.css */
+
+/* Set the background color for the entire app */
+/* body {
+  background-color: #fffff2;
+} */
+
+/* Ensure navbar elements have proper contrast with the background */
+/* .navbar { */
+  /* background-color: #00e6e6; Keep the flatly theme navbar color */
+/* } */
+
+/* Adjust panel backgrounds to match the theme */
+/* .well, .panel, .tab-pane {
+  background-color: #fffff2;
+} */
+
+/* Maintain consistent background for inputs */
+/* .form-control, .selectize-input {
+  background-color: #ffffff;
+} */
+
+/* Add this to www/custom.css */
+html:not(.bslib-dark-mode) .logo-dark {
+  display: none;
+}
+
+html.bslib-dark-mode .logo-light {
+  display: none;
+}
