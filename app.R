@@ -4,144 +4,148 @@ pacman::p_load(
   shiny, # For Shiny app functionality
   bslib, # For Bootstrap 5 and dark mode support
   dplyr, # For data manipulation
+  DT,
   tibble, # For tibble dataframes
   purrr, # For functional programming
   ggplot2, # For plots
   RSQLite, # For SQLite database support
-  auth0 # For authentication
+  auth0, # For authentication
+  openxlsx # For Excel export functionality
 )
 
 # Source module files
 source("R/module_home.R")
-source("R/module_explorer.R")
 source("R/module_viz.R")
 source("R/module_logo.R")
-source("R/league_users.R")
+source("R/module_data.R")
 
-league_id <- "1190192546172342272" # 2025 NuclearFF Dynasty
-users <- parse_league_users(league_id)
+# Try to source league_users.R at startup (optional - module will handle this)
+if (file.exists("R/league_users.R")) {
+  tryCatch(
+    {
+      source("R/league_users.R")
+    },
+    error = function(e) {
+      message("Could not source R/league_users.R: ", e$message)
+    }
+  )
+}
 
 # USER INTERFACE (UI) -----------------------------------------------------------------
 ui <- fluidPage(
-  # Apply dark theme
+  # Apply minimal theme - let styles.css handle most theming
   theme = bslib::bs_theme(
     version = 5,
-    bg = "#101010",
-    fg = "#FFFFFF",
-    base_font = font_google("Roboto Mono"),
-    code_font = font_google("Roboto Mono"),
-    heading_font = font_google("Roboto Mono")
+    base_font = font_google("Roboto Mono")
   ),
 
-  # Custom CSS for the navbar and general styling
+  # Include custom CSS file and theme detection
   tags$head(
-    tags$style(HTML("
-      body {
-        background-color: #101010;
-        color: #FFFFFF;
-        font-family: 'Roboto Mono', monospace;
+    includeCSS("www/styles.css"),
+    # Add Font Awesome
+    tags$link(
+      rel = "stylesheet",
+      href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    ),
+    # JavaScript for enhanced theme detection and custom handling
+    tags$script(HTML("
+      // Theme detection and management
+      function initThemeDetection() {
+        // Function to update theme-specific elements
+        function updateThemeElements() {
+          const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark' ||
+                        document.body.classList.contains('dark-mode') ||
+                        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+          // Dispatch custom event for theme change
+          window.dispatchEvent(new CustomEvent('themechange', {
+            detail: { isDark: isDark }
+          }));
+
+          // Update any JavaScript-dependent styling
+          updateDataTableTheme(isDark);
+        }
+
+        // Function to update DataTable theme
+        function updateDataTableTheme(isDark) {
+          // This will be called when DataTables are rendered
+          setTimeout(() => {
+            if (isDark) {
+              $('.dataTables_wrapper').addClass('dark-theme');
+              $('.dataTables_wrapper table').css({
+                'background-color': '#101010',
+                'color': '#ffffff'
+              });
+            } else {
+              $('.dataTables_wrapper').removeClass('dark-theme');
+              $('.dataTables_wrapper table').css({
+                'background-color': '#ffffff',
+                'color': '#212529'
+              });
+            }
+          }, 100);
+        }
+
+        // Observer for theme changes
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' &&
+                (mutation.attributeName === 'data-bs-theme' ||
+                 mutation.attributeName === 'class')) {
+              updateThemeElements();
+            }
+          });
+        });
+
+        // Custom dark mode toggle functionality
+        $(document).ready(function() {
+          $('#custom-dark-toggle').click(function() {
+            // Toggle the dark theme
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', newTheme);
+
+            // Store preference in sessionStorage
+            sessionStorage.setItem('theme', newTheme);
+          });
+
+          // Initialize theme from sessionStorage or system preference
+          function initializeTheme() {
+            const savedTheme = sessionStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-bs-theme', theme);
+          }
+
+          initializeTheme();
+        });
+
+        // Start observing
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-bs-theme', 'class']
+        });
+
+        observer.observe(document.body, {
+          attributes: true,
+          attributeFilter: ['class']
+        });
+
+        // Listen for system theme changes
+        if (window.matchMedia) {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeElements);
+        }
+
+        // Initial theme setup
+        updateThemeElements();
       }
 
-      .custom-navbar {
-        background-color: #101010;
-        padding: 10px 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
-        border-bottom: 1px solid #333;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        margin-left: -15px;
-        padding-left: 30px;
-        padding-right: 30px;
-      }
-
-      .navbar-left {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-      }
-
-      .navbar-right {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      .nav-link {
-        color: #FFFFFF;
-        text-decoration: none;
-        padding: 8px 12px;
-        border-radius: 4px;
-        transition: background-color 0.3s;
-      }
-
-      .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: #FFFFFF;
-        text-decoration: none;
-      }
-
-      .nav-link.active {
-        background-color: rgba(255, 255, 255, 0.2);
-        font-weight: bold;
-      }
-
-      .social-icon {
-        font-size: 1.3rem;
-        padding: 8px;
-        color: #FFFFFF;
-        transition: color 0.3s;
-      }
-
-      .social-icon:hover {
-        color: #007bff;
-        text-decoration: none;
-      }
-
-      .main-content {
-        margin-top: 80px;
-        padding: 20px;
-      }
-
-      .logout-btn {
-        background: transparent;
-        border: 1px solid #FFFFFF;
-        color: #FFFFFF;
-        padding: 6px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-
-      .logout-btn:hover {
-        background-color: #FFFFFF;
-        color: #101010;
-      }
-
-      /* Tab content styling */
-      .tab-content {
-        background-color: #101010;
-        color: #FFFFFF;
-        padding: 20px;
-        border-radius: 8px;
-        margin-top: 10px;
-      }
-
-      /* Override any Bootstrap styles that might interfere */
-      .nav-tabs .nav-link {
-        border: none;
-        background: transparent;
-        color: #FFFFFF;
-      }
-
-      .nav-tabs .nav-link.active {
-        background-color: rgba(255, 255, 255, 0.2);
-        color: #FFFFFF;
-        border: none;
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initThemeDetection);
+      } else {
+        initThemeDetection();
       }
     "))
   ),
@@ -157,7 +161,7 @@ ui <- fluidPage(
       logoUI("app_logo"),
       # Navigation links
       tags$a("HOME", href = "#", class = "nav-link", id = "home-tab"),
-      tags$a("USERS", href = "#", class = "nav-link", id = "users-tab")
+      tags$a("USERS", href = "#", class = "nav-link", id = "data-tab")
     ),
 
     # Right side - Social icons, dark mode, logout
@@ -187,10 +191,15 @@ ui <- fluidPage(
         class = "social-icon",
         icon("github")
       ),
-      # Dark mode toggle
-      bslib::input_dark_mode(),
+      # Enhanced dark mode toggle
+      tags$button(
+        id = "custom-dark-toggle",
+        class = "custom-dark-mode-toggle",
+        title = "Light/Dark Mode",
+        tags$i(class = "fa-solid fa-circle-half-stroke")
+      ),
       # Logout button
-      auth0::logoutButton(label = "Logout", class = "logout-btn")
+      auth0::logoutButton(label = "Logout", class = "logout-btn", title = "Logout")
     )
   ),
 
@@ -204,12 +213,13 @@ ui <- fluidPage(
       class = "tab-content",
       homeUI("home")
     ),
+
+    # Data tab content (initially hidden)
     tags$div(
-      id = "users-content",
+      id = "data-content",
       class = "tab-content",
       style = "display: none;",
-      h3("League Users"),
-      DT::dataTableOutput("users")
+      dataUI("data")
     )
   ),
 
@@ -228,12 +238,18 @@ ui <- fluidPage(
         $('#home-content').show();
       });
 
-      $('#users-tab').click(function(e) {
+      $('#data-tab').click(function(e) {
         e.preventDefault();
         $('.nav-link').removeClass('active');
         $(this).addClass('active');
         $('.tab-content').hide();
-        $('#users-content').show();
+        $('#data-content').show();
+      });
+
+      // Listen for theme changes to update components
+      window.addEventListener('themechange', function(event) {
+        console.log('Theme changed to:', event.detail.isDark ? 'dark' : 'light');
+        // Add any additional theme-specific JavaScript here
       });
     });
   "))
@@ -243,8 +259,8 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   # Call module servers
   homeServer("home")
-  explorerServer("explorer")
   vizServer("viz")
+  dataServer("data")
 
   # Initialize the logo module with single logo
   logoServer(
@@ -255,23 +271,16 @@ server <- function(input, output, session) {
     alt_text = "Nuclear Analytics Lab"
   )
 
-  # Users data table
-  output$users <- DT::renderDataTable(
-    DT::datatable(
-      users,
-      options = list(
-        paging = FALSE,
-        searching = FALSE,
-        dom = "t", # Only show table, no other controls
-        initComplete = DT::JS(
-          "function(settings, json) {",
-          "$(this.api().table().header()).css({'background-color': '#333', 'color': '#fff'});",
-          "}"
-        )
-      )
-    ) %>%
-      DT::formatStyle(columns = colnames(users), backgroundColor = "#101010", color = "#FFFFFF")
-  )
+  # Reactive value to track theme state
+  current_theme <- reactive({
+    input$dark_mode
+  })
+
+  # Optional: React to theme changes
+  observeEvent(current_theme(), {
+    # Add any server-side logic that should respond to theme changes
+    message("Theme changed to: ", if (current_theme()) "dark" else "light")
+  })
 }
 
 # Run the app
