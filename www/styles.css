@@ -1,0 +1,373 @@
+/* Enhanced Theme-Aware Styles for Nuclear Analytics Lab Shiny App */
+
+/* CSS Custom Properties for Theme Management */
+:root {
+  /* Light theme colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --navbar-bg: #f8f9fa;
+  --navbar-border: #dee2e6;
+  --hover-bg: rgba(0, 0, 0, 0.05);
+  --active-bg: rgba(0, 0, 0, 0.1);
+
+  /* NuclearFF Brand Colors */
+  --social-hover: #0fa0ce;
+  --logout-hover: #cf113f;
+  --navbar-active-line: #cf113f;
+  --navbar-hover-line: #0fa0ce;
+}
+
+/* Dark theme colors */
+[data-bs-theme="dark"] {
+  --bg-primary: #101010;
+  --bg-secondary: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #adb5bd;
+  --border-color: #333333;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --navbar-bg: #101010;
+  --navbar-border: #333333;
+  --hover-bg: rgba(255, 255, 255, 0.1);
+  --active-bg: rgba(255, 255, 255, 0.2);
+}
+
+/* Base body styling with theme support */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Roboto Mono', monospace;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom navbar with theme support */
+.custom-navbar {
+  background-color: var(--navbar-bg);
+  color: var(--text-primary);
+  padding: 10px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 1px solid var(--navbar-border);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  margin-left: -15px;
+  padding-left: 30px;
+  padding-right: 30px;
+  transition: all 0.3s ease;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Navigation links with theme support */
+.nav-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background-color: var(--hover-bg);
+  color: var(--text-primary);
+  font-weight: bold;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: var(--navbar-hover-line);
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  background-color: var(--active-bg);
+  color: var(--text-primary);
+  font-weight: bold;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: var(--navbar-active-line);
+}
+
+/* Social icons with theme support */
+.social-icon {
+  font-size: 1.3rem;
+  padding: 5px;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon:hover {
+  color: var(--social-hover);
+  background-color: var(--hover-bg);
+  text-decoration: none;
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Main content area */
+.main-content {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+/* Style the existing auth0 logout button as icon-only */
+.logout-btn {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-primary) !important;
+  padding: 5px !important;
+  border-radius: 5px !important;
+  transition: all 0.3s ease !important;
+  font-size: 1.2rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+.logout-btn:hover {
+  background-color: var(--hover-bg) !important;
+  color: var(--logout-hover) !important;
+  transform: translateY(-1px) !important;
+  text-decoration: none !important;
+}
+
+.logout-btn:focus {
+  outline: none !important;
+}
+
+/* Hide the text and show only the icon */
+.logout-btn::before {
+  content: "\f2f5" !important; /* Font Awesome right-from-bracket icon */
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  color: inherit !important;
+}
+
+/* Hide any existing text */
+.logout-btn {
+  font-size: 0 !important; /* Hide text */
+}
+
+.logout-btn::before {
+  font-size: 1.2rem !important; /* Show icon at proper size */
+}
+
+/* Custom dark mode toggle with Font Awesome icon */
+.custom-dark-mode-toggle {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-primary) !important;
+  padding: 5px !important;
+  border-radius: 5px !important;
+  transition: all 0.3s ease !important;
+  font-size: 1.2rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+.custom-dark-mode-toggle:hover {
+  background-color: var(--hover-bg) !important;
+  color: var(--social-hover) !important;
+  transform: translateY(-2px) !important;
+  text-decoration: none !important;
+}
+
+.custom-dark-mode-toggle:focus {
+  outline: none !important;
+}
+
+.custom-dark-mode-toggle i {
+  color: inherit !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Animation for the half-circle icon */
+.custom-dark-mode-toggle i.fa-circle-half-stroke {
+  transition: all 0.3s ease !important;
+}
+
+.custom-dark-mode-toggle:hover i.fa-circle-half-stroke {
+  transform: rotate(180deg) !important;
+}
+
+/* Tab content styling with theme support */
+.tab-content {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: 10px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+/* DataTable theme support */
+.theme-aware-table {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.dataTables_wrapper {
+  color: var(--text-primary);
+}
+
+.dataTables_wrapper table {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-collapse: collapse;
+}
+
+.dataTables_wrapper table thead th {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-color);
+  padding: 12px 8px;
+  font-weight: 600;
+}
+
+.dataTables_wrapper table tbody td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.dataTables_wrapper table tbody tr:hover td {
+  background-color: var(--hover-bg);
+}
+
+/* Form controls with theme support */
+.form-control {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  background-color: var(--bg-primary);
+  border-color: var(--social-hover);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+/* Button theme support */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--social-hover);
+  border-color: var(--social-hover);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+/* Loading states and animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Scrollbar styling for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Responsive design enhancements */
+@media (max-width: 768px) {
+  .custom-navbar {
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .navbar-left,
+  .navbar-right {
+    gap: 10px;
+  }
+
+  .main-content {
+    margin-top: 120px;
+    padding: 15px;
+  }
+
+  .social-icon {
+    font-size: 1.1rem;
+    padding: 6px;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-left,
+  .navbar-right {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-link {
+    padding: 6px 8px;
+    font-size: 0.875rem;
+  }
+
+  .main-content {
+    margin-top: 140px;
+    padding: 10px;
+  }
+}
