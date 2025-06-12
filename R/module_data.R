@@ -9,18 +9,18 @@ dataUI <- function(id) {
     sidebarLayout(
       sidebarPanel(
         h3("League Information"),
-        p("Enter your League ID to load data"),
+        p("Enter Sleeper League ID"),
         br(),
         # League ID input
         textInput(
           ns("league_id"),
           "League ID:",
           value = "",
-          placeholder = "Enter your league ID"
+          placeholder = "League ID"
         ),
         br(),
         h4("Data Options"),
-        p("Enter league ID above and click refresh to load league users."),
+        p("Enter league ID to load Sleeper league user information."),
         br(),
         # Add refresh button for debugging
         actionButton(ns("refresh"), "Load Data", class = "btn-primary"),
@@ -54,36 +54,30 @@ dataServer <- function(id) {
     # Create a reactive value to store the data
     data_store <- reactiveVal()
 
-    # Function to load data
+    # Function to load data using otis package
     load_data <- function(league_id) {
       tryCatch(
         {
-          # Try to source the file if it exists
-          if (file.exists("R/league_users.R")) {
-            source("R/league_users.R", local = TRUE)
-
-            # Check if function exists
-            if (exists("parse_league_users")) {
-              data <- parse_league_users(league_id)
-
-              # Validate data
-              if (is.null(data) || nrow(data) == 0) {
-                # Return sample data if no real data
-                data_store(create_sample_data())
-              } else {
-                data_store(data)
-              }
-            } else {
-              warning("parse_league_users function not found")
-              data_store(create_sample_data())
-            }
-          } else {
-            warning("R/league_users.R file not found")
+          # Check if otis package is available
+          if (!requireNamespace("otis", quietly = TRUE)) {
+            warning("otis package not found. Please install with: remotes::install_github('NuclearAnalyticsLab/otis')")
             data_store(create_sample_data())
+            return()
+          }
+
+          # Use otis package function to get league users
+          data <- otis::league_users_details(league_id)
+
+          # Validate data
+          if (is.null(data) || nrow(data) == 0) {
+            warning("No data returned from otis::league_users_details()")
+            data_store(create_sample_data())
+          } else {
+            data_store(data)
           }
         },
         error = function(e) {
-          warning(paste("Error loading data:", e$message))
+          warning(paste("Error loading data from otis package:", e$message))
           data_store(create_sample_data())
         }
       )
@@ -118,8 +112,8 @@ dataServer <- function(id) {
           paste("League ID:", input$league_id),
           paste("Rows:", nrow(data)),
           paste("Columns:", ncol(data)),
-          paste("File exists:", file.exists("R/league_users.R")),
-          paste("Function exists:", exists("parse_league_users")),
+          paste("OTIS package detected:", requireNamespace("otis", quietly = TRUE)),
+          paste("Function: otis::league_users_details()"),
           sep = "\n"
         )
       }
@@ -163,7 +157,7 @@ dataServer <- function(id) {
       }
 
       # Show loading notification
-      showNotification("Loading data...", type = "message", duration = 2)
+      showNotification("Loading data from otis package...", type = "message", duration = 2)
 
       # Load data with the provided league_id
       load_data(trimws(input$league_id))

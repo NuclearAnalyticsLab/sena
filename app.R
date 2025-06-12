@@ -15,7 +15,6 @@ pacman::p_load(
 
 # Source module files
 source("R/module_home.R")
-source("R/module_viz.R")
 source("R/module_logo.R")
 source("R/module_data.R")
 
@@ -259,7 +258,6 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   # Call module servers
   homeServer("home")
-  vizServer("viz")
   dataServer("data")
 
   # Initialize the logo module with single logo

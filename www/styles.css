@@ -13,16 +13,10 @@
   --navbar-border: #dee2e6;
   --hover-bg: rgba(0, 0, 0, 0.05);
   --active-bg: rgba(0, 0, 0, 0.1);
-  --button-border: #6c757d;
-  --button-hover-bg: #e9ecef;
-  --button-hover-text: #212529;
-  /* NuclearFF Light Theme */
+
+  /* NuclearFF Brand Colors */
   --social-hover: #0fa0ce;
   --logout-hover: #cf113f;
-  --page-active-bg: #f8f9fa;
-  --page-active-text: #212529;
-  --page-hover-bg: #f8f9fa;
-  --page-hover-text: #212529;
   --navbar-active-line: #cf113f;
   --navbar-hover-line: #0fa0ce;
 }
@@ -39,19 +33,6 @@
   --navbar-border: #333333;
   --hover-bg: rgba(255, 255, 255, 0.1);
   --active-bg: rgba(255, 255, 255, 0.2);
-  --button-border: #ffffff;
-  --button-hover-bg: #ffffff;
-  --button-hover-text: #101010;
-  --social-hover: #0fa0ce;
-  /* NuclearFF Dark Theme */
-  --social-hover: #0fa0ce;
-  --logout-hover: #cf113f;
-  --page-active-bg: #101010;
-  --page-active-text: #ffffff;
-  --page-hover-bg: #101010;
-  --page-hover-text: #ffffff;
-  --navbar-active-line: #cf113f;
-  --navbar-hover-line: #0fa0ce;
 }
 
 /* Base body styling with theme support */
@@ -105,24 +86,22 @@ body {
 }
 
 .nav-link:hover {
-  background-color: var(--page-hover-bg);
-  color: var(--page-hover-text);
-  /* text-decoration: underline double; */
+  background-color: var(--hover-bg);
+  color: var(--text-primary);
   font-weight: bold;
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-color: var(--navbar-hover-line);
-  transform: translateY(-1px); /* Slight lift effect */
+  transform: translateY(-1px);
 }
 
 .nav-link.active {
-  background-color: var(--page-active-bg);
-  color: var(--page-active-text);
+  background-color: var(--active-bg);
+  color: var(--text-primary);
   font-weight: bold;
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-color: var(--navbar-active-line);
-  /* box-shadow: 0 2px 4px var(--shadow-color); */
 }
 
 /* Social icons with theme support */
@@ -200,36 +179,6 @@ body {
   font-size: 1.2rem !important; /* Show icon at proper size */
 }
 
-/* Remove the custom logout button styles since we're keeping the original */
-
-/* Tab content styling with theme support */
-.tab-content {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  padding: 20px;
-  border-radius: 5px;
-  margin-top: 10px;
-  border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px var(--shadow-color);
-}
-
-/* Enhanced dark mode toggle styling */
-.form-switch .form-check-input {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
-}
-
-.form-switch .form-check-input:checked {
-  background-color: var(--social-hover);
-  border-color: var(--social-hover);
-}
-
-.form-switch .form-check-input:focus {
-  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
-}
-
 /* Custom dark mode toggle with Font Awesome icon */
 .custom-dark-mode-toggle {
   background: transparent !important;
@@ -273,100 +222,16 @@ body {
   transform: rotate(180deg) !important;
 }
 
-/* Hide the original bslib dark mode toggle if it exists */
-.bslib-dark-mode-toggle,
-#dark_mode,
-[data-toggle="dark-mode"] {
-  display: none !important;
-}
-
-/* Target the icon specifically */
-.bslib-dark-mode-toggle svg,
-.bslib-dark-mode-toggle i,
-#dark_mode svg,
-#dark_mode i,
-[data-toggle="dark-mode"] svg,
-[data-toggle="dark-mode"] i {
-  color: var(--text-primary) !important;
-  fill: var(--text-primary) !important;
-  width: 18px !important;
-  height: 18px !important;
-  transition: all 0.3s ease !important;
-}
-
-.bslib-dark-mode-toggle:hover svg,
-.bslib-dark-mode-toggle:hover i,
-#dark_mode:hover svg,
-#dark_mode:hover i,
-[data-toggle="dark-mode"]:hover svg,
-[data-toggle="dark-mode"]:hover i {
-  color: var(--social-hover) !important;
-  fill: var(--social-hover) !important;
-}
-
-/* Alternative targeting for different bslib structures */
-.bslib-toggle,
-.dark-mode-toggle {
-  background: transparent !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-primary) !important;
-  padding: 5px 5px !important;
-  border-radius: 5px !important;
-  transition: all 0.3s ease !important;
-  font-size: 1.1rem !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
-  height: 36px !important;
-}
-
-.bslib-toggle:hover,
-.dark-mode-toggle:hover {
-  background-color: var(--hover-bg) !important;
-  border-color: var(--social-hover) !important;
-  color: var(--social-hover) !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Ensure any nested elements are visible */
-.navbar-right .bslib-dark-mode-toggle,
-.navbar-right #dark_mode,
-.navbar-right [data-toggle="dark-mode"] {
-  margin: 0 4px !important;
-}
-
-/* Force visibility for stubborn elements */
-*[id*="dark"],
-*[class*="dark-mode"],
-*[class*="bslib"] {
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-/* Override Bootstrap nav-tabs for theme consistency */
-.nav-tabs {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.nav-tabs .nav-link {
-  border: none;
-  background: transparent;
+/* Tab content styling with theme support */
+.tab-content {
+  background-color: var(--bg-primary);
   color: var(--text-primary);
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: 10px;
+  border: 1px solid var(--border-color);
   transition: all 0.3s ease;
-}
-
-.nav-tabs .nav-link:hover {
-  background-color: var(--hover-bg);
-  color: var(--text-primary);
-  border: none;
-}
-
-.nav-tabs .nav-link.active {
-  background-color: var(--active-bg);
-  color: var(--text-primary);
-  border: none;
-  border-bottom: 2px solid var(--social-hover);
+  box-shadow: 0 2px 4px var(--shadow-color);
 }
 
 /* DataTable theme support */
@@ -436,39 +301,14 @@ body {
   box-shadow: 0 4px 8px var(--shadow-color);
 }
 
-/* Card components with theme support */
-.card {
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  transition: all 0.3s ease;
+/* Loading states and animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.card-header {
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-}
-
-/* Alert components with theme support */
-.alert {
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-}
-
-/* Modal support */
-.modal-content {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-.modal-header {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.modal-footer {
-  border-top: 1px solid var(--border-color);
+.tab-content {
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 /* Scrollbar styling for webkit browsers */
@@ -488,16 +328,6 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
-}
-
-/* Loading states and animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.tab-content {
-  animation: fadeIn 0.3s ease-in-out;
 }
 
 /* Responsive design enhancements */
