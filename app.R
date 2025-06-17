@@ -1,24 +1,25 @@
-# app.R
+# app.R - Mobile-Optimized NUCLEARFF App
 # Load required packages using pacman
 pacman::p_load(
-  shiny, # For Shiny app functionality
-  bslib, # For Bootstrap 5 and dark mode support
-  dplyr, # For data manipulation
-  DT,
-  tibble, # For tibble dataframes
-  purrr, # For functional programming
-  ggplot2, # For plots
-  RSQLite, # For SQLite database support
-  auth0, # For authentication
-  openxlsx # For Excel export functionality
+  shiny, # Core Shiny functionality
+  shinyMobile, # Mobile-first Framework7 components
+  dplyr, # Data manipulation
+  DT, # Data tables
+  tibble, # Modern data frames
+  purrr, # Functional programming
+  ggplot2, # Data visualization
+  RSQLite, # Database support
+  auth0, # Authentication
+  openxlsx, # Excel export
+  htmltools # HTML utilities
 )
 
-# Source module files
-source("R/module_home.R")
-source("R/module_logo.R")
-source("R/module_data.R")
+# Source mobile-optimized module files
+source("R/mobile_module_home.R")
+source("R/mobile_module_data.R")
+source("R/mobile_module_viz.R")
 
-# Try to source league_users.R at startup (optional - module will handle this)
+# Try to source league_users.R at startup (optional)
 if (file.exists("R/league_users.R")) {
   tryCatch(
     {
@@ -30,256 +31,244 @@ if (file.exists("R/league_users.R")) {
   )
 }
 
-# USER INTERFACE (UI) -----------------------------------------------------------------
-ui <- fluidPage(
-  # Apply minimal theme - let styles.css handle most theming
-  theme = bslib::bs_theme(
-    version = 5,
-    base_font = font_google("Roboto Mono")
+# MOBILE USER INTERFACE (UI) --------------------------------------------------------
+ui <- shinyMobile::f7Page(
+  # Framework7 app configuration for iOS/Android compatibility
+  title = "NUCLEARFF",
+  theme = "auto", # Automatically adapts to device theme (iOS/Android/dark/light)
+
+  # Enhanced mobile options
+  options = list(
+    theme = "auto", # Auto-detect device theme
+    dark = TRUE, # Enable dark mode support
+    filled = FALSE, # Framework7 styling option
+    color = "#007AFF", # Primary color (iOS blue)
+    touch = list(
+      tapHold = TRUE, # Enable tap-and-hold gestures
+      tapHoldDelay = 750 # Delay for tap-and-hold (ms)
+    ),
+    navbar = list(
+      hideOnPageScroll = TRUE, # Hide navbar when scrolling down
+      iosCenterTitle = TRUE # Center title on iOS
+    ),
+    toolbar = list(
+      hideOnPageScroll = FALSE # Keep bottom toolbar visible
+    )
   ),
 
-  # Include custom CSS file and theme detection
+  # Include custom CSS for mobile enhancements
   tags$head(
-    includeCSS("www/styles.css"),
-    # Add Font Awesome
+    # Mobile viewport meta tag for proper scaling
+    tags$meta(name = "viewport", content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"),
+
+    # PWA manifest for app-like experience
+    tags$link(rel = "manifest", href = "manifest.json"),
+
+    # Custom mobile CSS
+    includeCSS("www/mobile_styles.css"),
+
+    # Font Awesome for icons
     tags$link(
       rel = "stylesheet",
       href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     ),
-    # JavaScript for enhanced theme detection and custom handling
+
+    # Apple touch icon for iOS home screen
+    tags$link(rel = "apple-touch-icon", href = "nuclearff/nuclearff-navbar-icon-color.png"),
+
+    # Custom JavaScript for mobile interactions
     tags$script(HTML("
-      // Theme detection and management
-      function initThemeDetection() {
-        // Function to update theme-specific elements
-        function updateThemeElements() {
-          const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark' ||
-                        document.body.classList.contains('dark-mode') ||
-                        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-          // Dispatch custom event for theme change
-          window.dispatchEvent(new CustomEvent('themechange', {
-            detail: { isDark: isDark }
-          }));
-
-          // Update any JavaScript-dependent styling
-          updateDataTableTheme(isDark);
-        }
-
-        // Function to update DataTable theme
-        function updateDataTableTheme(isDark) {
-          // This will be called when DataTables are rendered
-          setTimeout(() => {
-            if (isDark) {
-              $('.dataTables_wrapper').addClass('dark-theme');
-              $('.dataTables_wrapper table').css({
-                'background-color': '#101010',
-                'color': '#ffffff'
-              });
-            } else {
-              $('.dataTables_wrapper').removeClass('dark-theme');
-              $('.dataTables_wrapper table').css({
-                'background-color': '#ffffff',
-                'color': '#212529'
-              });
-            }
-          }, 100);
-        }
-
-        // Observer for theme changes
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' &&
-                (mutation.attributeName === 'data-bs-theme' ||
-                 mutation.attributeName === 'class')) {
-              updateThemeElements();
-            }
-          });
-        });
-
-        // Custom dark mode toggle functionality
-        $(document).ready(function() {
-          $('#custom-dark-toggle').click(function() {
-            // Toggle the dark theme
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-bs-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-bs-theme', newTheme);
-
-            // Store preference in sessionStorage
-            sessionStorage.setItem('theme', newTheme);
-          });
-
-          // Initialize theme from sessionStorage or system preference
-          function initializeTheme() {
-            const savedTheme = sessionStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-bs-theme', theme);
+      // Enhanced mobile interactions
+      $(document).ready(function() {
+        // Add haptic feedback for supported devices
+        function addHapticFeedback(element) {
+          if ('vibrate' in navigator) {
+            navigator.vibrate(10); // Short vibration
           }
-
-          initializeTheme();
-        });
-
-        // Start observing
-        observer.observe(document.documentElement, {
-          attributes: true,
-          attributeFilter: ['data-bs-theme', 'class']
-        });
-
-        observer.observe(document.body, {
-          attributes: true,
-          attributeFilter: ['class']
-        });
-
-        // Listen for system theme changes
-        if (window.matchMedia) {
-          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeElements);
         }
 
-        // Initial theme setup
-        updateThemeElements();
-      }
+        // Add haptic feedback to buttons and links
+        $('.button, .link, .tab-link').on('touchstart', function() {
+          addHapticFeedback(this);
+        });
 
-      // Initialize when DOM is ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initThemeDetection);
-      } else {
-        initThemeDetection();
-      }
+        // Prevent zoom on double tap for iOS
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+          let now = (new Date()).getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        }, false);
+
+        // Handle orientation changes
+        window.addEventListener('orientationchange', function() {
+          setTimeout(function() {
+            // Refresh any charts or responsive elements
+            window.dispatchEvent(new Event('resize'));
+          }, 100);
+        });
+      });
     "))
   ),
 
-  # Custom navbar header
-  tags$header(
-    class = "custom-navbar",
-
-    # Left side - Logo and navigation
-    tags$div(
-      class = "navbar-left",
-      # Logo
-      logoUI("app_logo"),
-      # Navigation links
-      tags$a("HOME", href = "#", class = "nav-link", id = "home-tab"),
-      tags$a("USERS", href = "#", class = "nav-link", id = "data-tab")
+  # Main Framework7 app structure
+  shinyMobile::f7TabLayout(
+    # Navigation bar with mobile-optimized layout
+    navbar = f7Navbar(
+      title = tags$div(
+        style = "display: flex; align-items: center; gap: 10px;",
+        tags$img(
+          src = "nuclearff/nuclearff-navbar-icon-color.png",
+          height = "30px",
+          alt = "Nuclear Analytics Lab"
+        ),
+        "NUCLEARFF"
+      ),
+      # Right side navigation elements
+      rightPanel = tags$div(
+        # Social media links optimized for mobile
+        shinyMobile::f7Button(
+          href = "https://x.com/nuclearffnolan",
+          label = icon("x-twitter"),
+          external = TRUE,
+          fill = FALSE,
+          color = "gray",
+          size = "small"
+        ),
+        shinyMobile::f7Button(
+          href = "https://discord.gg/6BsAYh5S",
+          label = icon("discord"),
+          external = TRUE,
+          fill = FALSE,
+          color = "gray",
+          size = "small"
+        ),
+        shinyMobile::f7Button(
+          href = "https://github.com/NuclearAnalyticsLab/otis",
+          label = icon("github"),
+          external = TRUE,
+          fill = FALSE,
+          color = "gray",
+          size = "small"
+        )
+      )
     ),
 
-    # Right side - Social icons, dark mode, logout
-    tags$div(
-      class = "navbar-right",
-      # X (Twitter) icon
-      tags$a(
-        href = "https://x.com/nuclearffnolan",
-        target = "_blank",
-        title = "X",
-        class = "social-icon",
-        icon("x-twitter")
-      ),
-      # Discord icon
-      tags$a(
-        href = "https://discord.gg/6BsAYh5S",
-        target = "_blank",
-        title = "Discord",
-        class = "social-icon",
-        icon("discord")
-      ),
-      # GitHub icon
-      tags$a(
-        href = "https://github.com/NuclearAnalyticsLab/otis",
-        target = "_blank",
-        title = "GitHub",
-        class = "social-icon",
-        icon("github")
-      ),
-      # Enhanced dark mode toggle
-      tags$button(
-        id = "custom-dark-toggle",
-        class = "custom-dark-mode-toggle",
-        title = "Light/Dark Mode",
-        tags$i(class = "fa-solid fa-circle-half-stroke")
-      ),
-      # Logout button
-      auth0::logoutButton(label = "Logout", class = "logout-btn", title = "Logout")
-    )
-  ),
+    # Tab-based navigation optimized for mobile
+    shinyMobile::f7Tabs(
+      animated = TRUE, # Smooth transitions between tabs
+      swipeable = TRUE, # Allow swiping between tabs on mobile
 
-  # Main content area
-  tags$div(
-    class = "main-content",
+      # Home tab
+      shinyMobile::f7Tab(
+        tabName = "home",
+        icon = f7Icon("house_fill"),
+        text = "Home",
+        active = TRUE,
+        mobileHomeUI("home")
+      ),
 
-    # Tab content (initially show home)
-    tags$div(
-      id = "home-content",
-      class = "tab-content",
-      homeUI("home")
+      # Data tab
+      shinyMobile::f7Tab(
+        tabName = "data",
+        icon = f7Icon("table_fill"),
+        text = "Users",
+        mobileDataUI("data")
+      ),
+
+      # Visualizations tab
+      shinyMobile::f7Tab(
+        tabName = "viz",
+        icon = f7Icon("chart_bar_fill"),
+        text = "Charts",
+        mobileVizUI("viz")
+      )
     ),
 
-    # Data tab content (initially hidden)
-    tags$div(
-      id = "data-content",
-      class = "tab-content",
-      style = "display: none;",
-      dataUI("data")
+    # Optional bottom toolbar for additional actions
+    toolbar = shinyMobile::f7Toolbar(
+      position = "bottom",
+      # Theme toggle button
+      shinyMobile::f7Button(
+        inputId = "theme_toggle",
+        label = f7Icon("circle_lefthalf_fill"),
+        fill = FALSE,
+        color = "gray",
+      ),
+      # Spacer
+      tags$div(style = "flex: 1;"),
+      # Logout button optimized for mobile
+      shinyMobile::f7Button(
+        inputId = "logout_btn",
+        label = "Logout",
+        fill = TRUE,
+        color = "red",
+        size = "small",
+      ),
     )
-  ),
-
-  # JavaScript for tab switching
-  tags$script(HTML("
-    $(document).ready(function() {
-      // Set initial active tab
-      $('#home-tab').addClass('active');
-
-      // Tab switching functionality
-      $('#home-tab').click(function(e) {
-        e.preventDefault();
-        $('.nav-link').removeClass('active');
-        $(this).addClass('active');
-        $('.tab-content').hide();
-        $('#home-content').show();
-      });
-
-      $('#data-tab').click(function(e) {
-        e.preventDefault();
-        $('.nav-link').removeClass('active');
-        $(this).addClass('active');
-        $('.tab-content').hide();
-        $('#data-content').show();
-      });
-
-      // Listen for theme changes to update components
-      window.addEventListener('themechange', function(event) {
-        console.log('Theme changed to:', event.detail.isDark ? 'dark' : 'light');
-        // Add any additional theme-specific JavaScript here
-      });
-    });
-  "))
+  )
 )
 
-# Define server
+# MOBILE-OPTIMIZED SERVER ------------------------------------------------------------
 server <- function(input, output, session) {
-  # Call module servers
-  homeServer("home")
-  dataServer("data")
+  # Initialize mobile modules with enhanced functionality
+  mobileHomeServer("home")
+  mobileDataServer("data")
+  mobileVizServer("viz")
 
-  # Initialize the logo module with single logo
-  logoServer(
-    id = "app_logo",
-    session = session,
-    logo_path = "nuclearff/nuclearff-navbar-icon-color.png",
-    height = 30,
-    alt_text = "Nuclear Analytics Lab"
-  )
+  # Theme toggle functionality for mobile
+  observeEvent(input$theme_toggle, {
+    # Toggle between light and dark themes
+    shinyMobile::updateF7App(
+      options = list(
+        theme = if (input$theme_toggle %% 2 == 0) "light" else "dark"
+      )
+    )
 
-  # Reactive value to track theme state
-  current_theme <- reactive({
-    input$dark_mode
+    # Show toast notification for theme change
+    shinyMobile::f7Toast(
+      text = paste("Switched to", if (input$theme_toggle %% 2 == 0) "light" else "dark", "theme"),
+      position = "center",
+      closeTimeout = 2000
+    )
   })
 
-  # Optional: React to theme changes
-  observeEvent(current_theme(), {
-    # Add any server-side logic that should respond to theme changes
-    message("Theme changed to: ", if (current_theme()) "dark" else "light")
+  # Mobile-optimized logout functionality
+  observeEvent(input$logout_btn, {
+    # Show confirmation dialog optimized for mobile
+    shinyMobile::f7Dialog(
+      title = "Logout",
+      text = "Are you sure you want to logout?",
+      type = "confirm"
+    )
+  })
+
+  # Handle logout confirmation
+  observeEvent(input$logout_confirm, {
+    if (input$logout_confirm) {
+      # Use auth0 logout or custom logout logic
+      auth0::logout()
+    }
+  })
+
+  # Handle connection quality changes (for mobile networks)
+  observe({
+    # Add logic to handle poor network conditions
+    # This could include reducing data requests, caching, etc.
+  })
+
+  # Device orientation handling
+  observeEvent(input$device_orientation, {
+    # Adjust layouts based on orientation changes
+    # Useful for responsive chart sizing
   })
 }
 
-# Run the app
-auth0::shinyAppAuth0(ui, server)
+# Enhanced app launch with mobile-specific options
+auth0::shinyAppAuth0(
+  ui = ui,
+  server = server,
+  config_file = "_auth0.yml" # Ensure auth0 config is mobile-friendly
+)

@@ -1,0 +1,457 @@
+/* www/mobile_styles.css */
+/* Mobile-Optimized Styles for NUCLEARFF App */
+
+/* ==============================================
+   MOBILE-FIRST RESPONSIVE DESIGN
+   ============================================== */
+
+/* Base mobile styles (320px and up) */
+:root {
+  --mobile-padding: 15px;
+  --mobile-margin: 10px;
+  --mobile-border-radius: 12px;
+  --touch-target-size: 44px; /* Apple HIG minimum */
+
+  /* Color system for mobile themes */
+  --primary-blue: #007AFF;
+  --secondary-blue: #5AC8FA;
+  --success-green: #34C759;
+  --warning-orange: #FF9500;
+  --error-red: #FF3B30;
+  --gray-light: #F2F2F7;
+  --gray-medium: #8E8E93;
+  --gray-dark: #1C1C1E;
+
+  /* Mobile typography scale */
+  --mobile-text-xs: 12px;
+  --mobile-text-sm: 14px;
+  --mobile-text-md: 16px;
+  --mobile-text-lg: 18px;
+  --mobile-text-xl: 20px;
+  --mobile-text-xxl: 24px;
+}
+
+/* Prevent zoom on input focus (iOS) */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  font-size: 16px !important; /* Prevents zoom on iOS */
+  -webkit-appearance: none;
+  border-radius: var(--mobile-border-radius);
+}
+
+/* ==============================================
+   TOUCH AND GESTURE OPTIMIZATIONS
+   ============================================== */
+
+/* Larger touch targets for mobile */
+.f7-button,
+.button,
+.tab-link,
+.link {
+  min-height: var(--touch-target-size);
+  min-width: var(--touch-target-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--mobile-border-radius);
+  transition: all 0.2s ease;
+}
+
+/* Enhanced touch feedback */
+.f7-button:active,
+.button:active,
+.tab-link:active,
+.link:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* Smooth scrolling for all containers */
+* {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* ==============================================
+   MOBILE NAVIGATION OPTIMIZATIONS
+   ============================================== */
+
+/* Tab bar optimizations for mobile */
+.f7-tabs .f7-tab {
+  padding: var(--mobile-padding);
+}
+
+.f7-toolbar-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0); /* iPhone X notch */
+  background: rgba(var(--f7-theme-color-rgb), 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Navbar mobile optimizations */
+.f7-navbar {
+  padding-top: env(safe-area-inset-top, 0);
+  background: rgba(var(--f7-theme-color-rgb), 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ==============================================
+   CARD AND LAYOUT OPTIMIZATIONS
+   ============================================== */
+
+/* Mobile-optimized cards */
+.f7-card {
+  margin: var(--mobile-margin);
+  border-radius: var(--mobile-border-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.f7-card-content {
+  padding: var(--mobile-padding);
+}
+
+/* Hero section mobile optimization */
+.hero-section {
+  padding: calc(var(--mobile-padding) * 2) var(--mobile-padding);
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+  color: white;
+  border-radius: var(--mobile-border-radius);
+  margin-bottom: var(--mobile-margin);
+}
+
+/* ==============================================
+   MOBILE DATA TABLES
+   ============================================== */
+
+/* Mobile-responsive DataTables */
+.mobile-table {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-table table {
+  min-width: 100%;
+  font-size: var(--mobile-text-sm);
+}
+
+.mobile-table th,
+.mobile-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.mobile-table th {
+  background-color: var(--gray-light);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* DataTable mobile controls */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+  margin: var(--mobile-margin) 0;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+  padding: 8px 12px;
+  border: 1px solid var(--gray-medium);
+  border-radius: var(--mobile-border-radius);
+  width: 100%;
+  max-width: 200px;
+}
+
+/* ==============================================
+   MOBILE CHART OPTIMIZATIONS
+   ============================================== */
+
+/* Responsive chart containers */
+.chart-container {
+  width: 100%;
+  height: auto;
+  min-height: 300px;
+  overflow: hidden;
+  border-radius: var(--mobile-border-radius);
+}
+
+/* Chart mobile interactions */
+.chart-interaction {
+  background: var(--gray-light);
+  padding: var(--mobile-padding);
+  border-radius: var(--mobile-border-radius);
+  margin-top: var(--mobile-margin);
+  font-size: var(--mobile-text-sm);
+}
+
+/* ==============================================
+   MOBILE FORM OPTIMIZATIONS
+   ============================================== */
+
+/* Mobile form styling */
+.f7-list-item-content {
+  min-height: var(--touch-target-size);
+}
+
+.f7-input {
+  font-size: 16px !important; /* Prevent zoom on iOS */
+  padding: 12px 16px;
+  border-radius: var(--mobile-border-radius);
+  border: 1px solid var(--gray-medium);
+  background: white;
+}
+
+.f7-input:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+  outline: none;
+}
+
+/* ==============================================
+   MOBILE LOADING AND FEEDBACK
+   ============================================== */
+
+/* Enhanced loading states for mobile */
+.f7-preloader {
+  margin: calc(var(--mobile-padding) * 2) auto;
+}
+
+/* Mobile toast notifications */
+.f7-toast {
+  border-radius: var(--mobile-border-radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Loading button states */
+.button.loading {
+  pointer-events: none;
+  opacity: 0.6;
+  position: relative;
+}
+
+.button.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==============================================
+   MOBILE-SPECIFIC UTILITY CLASSES
+   ============================================== */
+
+/* Text size utilities for mobile */
+.mobile-text-xs { font-size: var(--mobile-text-xs); }
+.mobile-text-sm { font-size: var(--mobile-text-sm); }
+.mobile-text-md { font-size: var(--mobile-text-md); }
+.mobile-text-lg { font-size: var(--mobile-text-lg); }
+.mobile-text-xl { font-size: var(--mobile-text-xl); }
+.mobile-text-xxl { font-size: var(--mobile-text-xxl); }
+
+/* Mobile spacing utilities */
+.mobile-p-xs { padding: calc(var(--mobile-padding) * 0.5); }
+.mobile-p-sm { padding: var(--mobile-padding); }
+.mobile-p-md { padding: calc(var(--mobile-padding) * 1.5); }
+.mobile-p-lg { padding: calc(var(--mobile-padding) * 2); }
+
+.mobile-m-xs { margin: calc(var(--mobile-margin) * 0.5); }
+.mobile-m-sm { margin: var(--mobile-margin); }
+.mobile-m-md { margin: calc(var(--mobile-margin) * 1.5); }
+.mobile-m-lg { margin: calc(var(--mobile-margin) * 2); }
+
+/* ==============================================
+   DARK MODE OPTIMIZATIONS
+   ============================================== */
+
+/* Dark mode variables */
+:root[data-theme="dark"],
+.dark-mode {
+  --background-primary: #000000;
+  --background-secondary: #1C1C1E;
+  --background-tertiary: #2C2C2E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #8E8E93;
+  --border-color: #38383A;
+}
+
+/* Dark mode card styling */
+[data-theme="dark"] .f7-card,
+.dark-mode .f7-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Dark mode table styling */
+[data-theme="dark"] .mobile-table th,
+.dark-mode .mobile-table th {
+  background-color: var(--background-tertiary);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .mobile-table td,
+.dark-mode .mobile-table td {
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* ==============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================== */
+
+/* Small tablets (601px and up) */
+@media (min-width: 601px) {
+  :root {
+    --mobile-padding: 20px;
+    --mobile-margin: 15px;
+  }
+
+  .f7-card {
+    max-width: 600px;
+    margin: var(--mobile-margin) auto;
+  }
+
+  .mobile-table {
+    border-radius: var(--mobile-border-radius);
+    overflow: hidden;
+  }
+}
+
+/* Large tablets and desktop (901px and up) */
+@media (min-width: 901px) {
+  .f7-row .f7-col {
+    padding: 0 var(--mobile-margin);
+  }
+
+  .mobile-table table {
+    font-size: var(--mobile-text-md);
+  }
+
+  .chart-container {
+    min-height: 400px;
+  }
+}
+
+/* ==============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .f7-button,
+  .button {
+    border: 2px solid currentColor;
+  }
+
+  .f7-card {
+    border: 2px solid var(--border-color);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus indicators for keyboard navigation */
+.f7-button:focus,
+.button:focus,
+.f7-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+/* ==============================================
+   PWA AND INSTALLATION STYLES
+   ============================================== */
+
+/* PWA install prompt styling */
+.pwa-install-prompt {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 20px);
+  left: var(--mobile-margin);
+  right: var(--mobile-margin);
+  background: var(--primary-blue);
+  color: white;
+  padding: var(--mobile-padding);
+  border-radius: var(--mobile-border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+  transform: translateY(100px);
+  transition: transform 0.3s ease;
+}
+
+.pwa-install-prompt.show {
+  transform: translateY(0);
+}
+
+.pwa-install-prompt .install-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: var(--mobile-text-sm);
+  cursor: pointer;
+}
+
+/* ==============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================== */
+
+/* GPU acceleration for smooth animations */
+.f7-button,
+.f7-card,
+.f7-tab {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Optimize fonts for mobile */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Optimize images for mobile */
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  loading: lazy; /* Native lazy loading */
+}
