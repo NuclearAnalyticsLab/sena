@@ -1,14 +1,6 @@
 
-<div align="center" style="width: 200px; margin: auto; margin-bottom: 130px;">
-  <!-- Logo image -->
-  <div style="margin-bottom: 0px; margin-top: 0px;">
-    <img src="man/logo/logo.png" align="right" height="50" alt="" />
-  </div>
-</div>
-<br>
-<br>
+# SENA <img src="man/logo/logo.png" align="right" height="200" alt="" />
 
-#
 **S**hiny **E**ssentials for **N**uclearFF **A**pplications (**SENA**)
 
 <!-- badges: start -->
