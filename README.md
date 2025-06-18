@@ -4,7 +4,7 @@
 **S**hiny **E**ssentials for **N**uclearFF **A**pplications (**SENA**)
 
 SENA is an R package intended for use in Shiny applications. 
-The package allows for functions to be used to rapidly generate Shiny applications by developing Shiny modules.
+The package allows for functions to be used to rapidly generate Shiny applications with development of Shiny modules.
 
 
 <!-- badges: start -->
